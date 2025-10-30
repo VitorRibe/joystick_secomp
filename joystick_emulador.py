@@ -140,7 +140,7 @@ except Exception as e:
     print(f"\nOCORREU UM ERRO INESPERADO: {e}", file=sys.stderr)
 
 finally:
-    # 5. GARANTE que todas as teclas pressionadas sejam liberadas ao encerrar o script
+    # 5. GARANTE que todas as teclas pressionadas sejam liberadas ao encerrar o script.
     if current_keys_pressed:
         print("\nLiberando todas as teclas ativas...", file=sys.stderr)
         for key in list(current_keys_pressed):

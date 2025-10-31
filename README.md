@@ -83,3 +83,16 @@ recebe os dados do Arduino e decide qual dos comandos de teclado abaixo enviar p
 ### botões 🔘
 - **letra z** = _quando pressionado botão da direita_
 - **letra x** = _quando pressionado botão da esquerda_
+
+<footer style="border-top: 1px solid #ccc; padding-top: 10px;">
+  <div align="center">
+    <br>
+    <a href="https://prototipe.tec.br/" target="_blank">
+      <img src="imgs/logo.png" width="100" alt="Logo Prototipe Jr.">
+    </a>
+    <a href="https://creativecommons.org/licenses/by-sa/4.0/" target="_blank"></a>
+    <br>
+    Projeto desenvolvido pelos membros discentes em Ciência da Computação da empresa júnior Prototipe Jr.<br>
+    <br>
+  </div>
+</footer>

@@ -1,7 +1,13 @@
 import pygame
-import sys
+import sys, os
 import random
 import time
+
+
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+ASSETS_DIR = os.path.join(BASE_DIR, "assets")
+
+
 # Assumimos que o módulo serial_reader.py está na pasta src/ e está importável
 from src.serial_reader import ArduinoSerialReader
 
@@ -47,7 +53,7 @@ explosion_sound = None
 class Nave(pygame.sprite.Sprite):
     def __init__(self):
         super().__init__()
-        self.image = pygame.image.load("assets/img/nave.png").convert_alpha()
+        self.image = pygame.image.load(os.path.join(ASSETS_DIR, "img", "nave.png")).convert_alpha()
         self.image = pygame.transform.scale(self.image, (80, 80))
         self.rect = self.image.get_rect()
         self.rect.center = (SCREEN_WIDTH // 2, SCREEN_HEIGHT - 50)
@@ -64,7 +70,7 @@ class Nave(pygame.sprite.Sprite):
 class Projetil(pygame.sprite.Sprite):
     def __init__(self, x, y):
         super().__init__()
-        self.original_image = pygame.image.load("assets/img/laser_nave.png").convert_alpha()
+        self.original_image = pygame.image.load(os.path.join(ASSETS_DIR, "img", "laser_nave.png")).convert_alpha()
         self.image = pygame.transform.scale(self.original_image, (20, 40))
         self.rect = self.image.get_rect()
         self.rect.centerx = x
@@ -80,7 +86,7 @@ class Projetil(pygame.sprite.Sprite):
 class Inimigo(pygame.sprite.Sprite):
     def __init__(self):
         super().__init__();
-        self.image = pygame.image.load("assets/img/enemy.png").convert_alpha()
+        self.image = pygame.image.load(os.path.join(ASSETS_DIR, "img", "enemy.png")).convert_alpha()
         self.image = pygame.transform.scale(self.image, (100, 100))
         self.rect = self.image.get_rect();
         self.rect.x = random.randrange(0, SCREEN_WIDTH - 40)
@@ -106,8 +112,8 @@ class Inimigo(pygame.sprite.Sprite):
 class ProjetilInimigo(pygame.sprite.Sprite):
     def __init__(self, x, y):
         super().__init__();
-        self.image = pygame.Surface([4, 10]);
-        self.image.fill(RED)
+        self.original_image = pygame.image.load(os.path.join(ASSETS_DIR, "img", "laser_enemy.png")).convert_alpha()
+        self.image = pygame.transform.scale(self.original_image, (20, 40))
         self.rect = self.image.get_rect();
         self.rect.centerx = x;
         self.rect.top = y
@@ -120,7 +126,7 @@ class ProjetilInimigo(pygame.sprite.Sprite):
 class Explosao(pygame.sprite.Sprite):
     def __init__(self, center):
         super().__init__()
-        self.original_image = pygame.image.load("assets/img/explosion.png").convert_alpha()
+        self.original_image = pygame.image.load(os.path.join(ASSETS_DIR, "img", "explosion.png")).convert_alpha()
         self.original_image = pygame.transform.scale(self.original_image, (60, 60))
         self.image = self.original_image.copy()
         self.rect = self.image.get_rect()
@@ -242,11 +248,11 @@ def handle_input_teclado():
 
 # --- LOOP PRINCIPAL DO JOGO ---
 
-def game_loop():
+def game_loop(arduino_reader=None):
     global LAST_ENEMY_SPAWN_TIME, running, game_over, SCORE
     global laser_sound, explosion_sound
 
-    # 1. Tenta Inicializar o Leitor Serial no Thread (SEMPRE DENTRO DE UM TRY/EXCEPT)
+    ''''# 1. Tenta Inicializar o Leitor Serial no Thread (SEMPRE DENTRO DE UM TRY/EXCEPT)
     arduino_reader = ArduinoSerialReader(SERIAL_PORT, BAUD_RATE)
 
     try:
@@ -259,6 +265,9 @@ def game_loop():
         # Falha total na inicialização do thread/serial.
         print("AVISO: Falha grave ao iniciar o Thread Serial. O controle Arduino está DESATIVADO.")
         serial_active = False
+    '''
+
+    serial_active = arduino_reader and arduino_reader.ser and arduino_reader.ser.is_open
 
     # 2. Inicialização Pygame (SEMPRE AQUI)
     pygame.init()
@@ -270,22 +279,22 @@ def game_loop():
     running = True
 
     # --- CARREGAR FUNDO ---
-    background = pygame.image.load("assets/img/bg.png").convert()
+    background = pygame.image.load(os.path.join(ASSETS_DIR, "img", "bg.png")).convert()
     background = pygame.transform.scale(background, (SCREEN_WIDTH, SCREEN_HEIGHT))
     # Controle do movimento do fundo
     bg_y = 0
     bg_speed = 1  # quanto maior, mais rápido o fundo se move
 
     # --- CARREGAR SONS ---
-    pygame.mixer.music.load("assets/sounds/SpaceMusic.mp3")
+    pygame.mixer.music.load(os.path.join(ASSETS_DIR, "sounds", "SpaceMusic.mp3"))
     pygame.mixer.music.set_volume(0.4)
     pygame.mixer.music.play(-1)  # toca continuamente
 
-    laser_sound = pygame.mixer.Sound("assets/sounds/laser.wav")
+    laser_sound = pygame.mixer.Sound(os.path.join(ASSETS_DIR, "sounds", "laser.wav"))
     laser_sound.set_volume(0.3)
 
-    explosion_sound = pygame.mixer.Sound("assets/sounds/explosion.wav")
-    explosion_sound.set_volume(1.0)
+    explosion_sound = pygame.mixer.Sound(os.path.join(ASSETS_DIR, "sounds", "explosion1.mp3"))
+    explosion_sound.set_volume(0.4)
 
     initialize_game()
 
@@ -294,6 +303,23 @@ def game_loop():
             # [O restante do loop de jogo permanece o mesmo...]
 
             if player.health <= 0:
+                # cria explosao na posicao da nave
+                explosion_sound.play()
+                explosao = Explosao(player.rect.center)
+                all_sprites.add(explosao)
+
+                # para a musica de fundo suavemente
+                pygame.mixer.music.fadeout(800)
+
+                # desenha um pequeno loop para mostrar a animacao da explosao
+                for _ in range(30):  # 30 frames ~ meio segundo a 60fps
+                    all_sprites.update()
+                    screen.blit(background, (0, bg_y))
+                    screen.blit(background, (0, bg_y - SCREEN_HEIGHT))
+                    all_sprites.draw(screen)
+                    pygame.display.flip()
+                    clock.tick(60)
+
                 game_over = True
 
             if game_over:
@@ -356,9 +382,20 @@ def game_loop():
             clock.tick(60)
 
     finally:
-        arduino_reader.stop()
-        pygame.quit()
-        sys.exit()
+        # Para e reinicializa o mixer completamente
+        if pygame.mixer.get_init():
+            pygame.mixer.music.stop()
+            pygame.mixer.quit()  # fecha completamente o mixer
+
+        # Limpa sprites globais
+        all_sprites.empty()
+        bullets.empty()
+        enemies.empty()
+        enemy_bullets.empty()
+
+        # Não fecha o Pygame nem sai do programa
+        return  # volta para o menu
+
 
 
 if __name__ == '__main__':

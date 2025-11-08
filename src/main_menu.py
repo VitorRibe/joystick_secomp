@@ -13,19 +13,19 @@ GREEN = (0, 255, 0)
 GRAY = (100, 100, 100)
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))  # /home/vitor/PycharmProjects/joystick_secomp/src
-thumb_path = os.path.join(BASE_DIR, "games", "space", "assets", "img", "game_cover.png")
+thumb_path = os.path.join(BASE_DIR, "games")
 
 
 # --- JOGOS DISPONÍVEIS ---
 games = [
     {"name": "Space Shooter", "module": "games.space.nave_game",
-     "thumb": os.path.join(BASE_DIR, "games", "space", "assets", "img", "game_cover.png")},
-    {"name": "Futuro Game 2", "module": None,
-     "thumb": os.path.join(BASE_DIR, "assets", "img", "thumb_futuro.png")},
+     "thumb": os.path.join(thumb_path, "space", "assets", "img", "game_cover.png")},
+    {"name": "Protodino Entrega", "module": "games.dino.dino_game",
+     "thumb": os.path.join(thumb_path, "dino", "assets", "img", "game_cover.png")},
     {"name": "Futuro Game 3", "module": None,
-     "thumb": os.path.join(BASE_DIR, "assets", "img", "thumb_futuro.png")},
+     "thumb": os.path.join(thumb_path, "assets", "img", "thumb_futuro.png")},
     {"name": "Futuro Game 4", "module": None,
-     "thumb": os.path.join(BASE_DIR, "assets", "img", "thumb_futuro.png")},
+     "thumb": os.path.join(thumb_path, "assets", "img", "thumb_futuro.png")},
 ]
 
 

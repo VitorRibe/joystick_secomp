@@ -25,7 +25,7 @@ class Dino(pygame.sprite.Sprite):
             pygame.image.load(os.path.join(ASSETS_DIR, "img", "dino_run1.png")).convert_alpha(),
             pygame.image.load(os.path.join(ASSETS_DIR, "img", "dino_run2.png")).convert_alpha()
         ]
-        self.jump_image = pygame.image.load(os.path.join(ASSETS_DIR, "img", "jump.png")).convert_alpha()
+        self.jump_image = pygame.image.load(os.path.join(ASSETS_DIR, "img", "dino_jump.png")).convert_alpha()
         self.image = self.run_images[0]
 
         self.rect = self.image.get_rect()
@@ -121,6 +121,13 @@ def game_loop(arduino_reader=None):
     jump_sound = pygame.mixer.Sound(os.path.join(ASSETS_DIR, "sounds", "jump.wav"))
     die_sound = pygame.mixer.Sound(os.path.join(ASSETS_DIR, "sounds", "die.wav"))
 
+    # --- CARREGAR FUNDO ---
+    background = pygame.image.load(os.path.join(ASSETS_DIR, "img", "bg.png")).convert()
+    background = pygame.transform.scale(background, (SCREEN_WIDTH, SCREEN_HEIGHT))
+    # Controle do movimento do fundo
+    bg_x = 0
+    bg_speed = 1  # quanto maior, mais rápido o fundo se move
+
     # Sprites
     all_sprites = pygame.sprite.Group()
     obstacles = pygame.sprite.Group()
@@ -160,6 +167,13 @@ def game_loop(arduino_reader=None):
 
         # Update
         all_sprites.update()
+
+        # --- RENDERIZAÇÃO COM FUNDO EM MOVIMENTO ---
+        bg_x -= bg_speed
+        if bg_x <= -SCREEN_WIDTH:
+            bg_x = 0
+        screen.blit(background, (bg_x, 0))
+        screen.blit(background, (bg_x + SCREEN_WIDTH, 0))
 
         # Colisões
         if pygame.sprite.spritecollide(player, obstacles, False):

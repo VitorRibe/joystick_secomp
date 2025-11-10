@@ -15,7 +15,6 @@ GRAY = (100, 100, 100)
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))  # /home/vitor/PycharmProjects/joystick_secomp/src
 thumb_path = os.path.join(BASE_DIR, "games")
 
-
 # --- JOGOS DISPONÍVEIS ---
 games = [
     {"name": "Space Shooter", "module": "games.space.nave_game",

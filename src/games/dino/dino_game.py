@@ -86,8 +86,8 @@ class Obstacle(pygame.sprite.Sprite):
         self.speed = 8
 
         # Reduz 10% da hitbox
-        shrink_x = int(self.rect.width * 0.3)
-        shrink_y = int(self.rect.height * 0.3)
+        shrink_x = int(self.rect.width * 0.9)
+        shrink_y = int(self.rect.height * 0.9)
         self.rect = self.rect.inflate(-shrink_x, -shrink_y)
 
     def update(self):

@@ -22,12 +22,7 @@ games = [
      "thumb": os.path.join(thumb_path, "space", "assets", "img", "game_cover.png")},
     {"name": "Protodino Entrega", "module": "games.dino.dino_game",
      "thumb": os.path.join(thumb_path, "dino", "assets", "img", "game_cover.png")},
-    {"name": "Futuro Game 3", "module": None,
-     "thumb": os.path.join(thumb_path, "assets", "img", "thumb_futuro.png")},
-    {"name": "Futuro Game 4", "module": None,
-     "thumb": os.path.join(thumb_path, "assets", "img", "thumb_futuro.png")},
 ]
-
 
 # --- DESENHA MENU ---
 def draw_menu(screen, font, selected_index, bg_image, logo):
@@ -96,15 +91,6 @@ def main():
     # --- Carregar logo da empresa ---
     logo = pygame.image.load("../imgs/logo.png").convert_alpha()
     logo = pygame.transform.scale(logo, (80, 40))  # ajuste o tamanho como quiser
-
-    '''# --- SOM DO MENU ---
-    try:
-        pygame.mixer.music.load("assets/sounds/menu_music.mp3")
-        pygame.mixer.music.set_volume(0.4)
-        pygame.mixer.music.play(-1)
-    except Exception as e:
-        print("⚠️ Falha ao carregar musica de menu:", e)
-    '''
 
     # --- INICIALIZA SERIAL UMA ÚNICA VEZ ---
     SERIAL_PORT = '/dev/ttyUSB0'

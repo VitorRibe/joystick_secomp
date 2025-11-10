@@ -78,5 +78,3 @@ class ArduinoSerialReader(threading.Thread):
         if self.ser and self.ser.is_open:
             self.ser.close()
         print("SerialReader: Thread encerrado.")
-
-# Fim de serial_reader.py

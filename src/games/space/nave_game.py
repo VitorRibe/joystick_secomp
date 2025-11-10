@@ -7,10 +7,6 @@ import time
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 ASSETS_DIR = os.path.join(BASE_DIR, "assets")
 
-
-# Assumimos que o módulo serial_reader.py está na pasta src/ e está importável
-from src.serial_reader import ArduinoSerialReader
-
 # --- CONFIGURAÇÕES DA APLICAÇÃO ---
 # Use um nome fictício que não cause erro de permissão no Linux (ex: 'COM_FICTICIA')
 # Ou use a porta COM correta se o Arduino estiver conectado e o SO for Windows.
@@ -24,8 +20,8 @@ LAST_ENEMY_SPAWN_TIME = 0
 ENEMY_SPAWN_RATE = 1500
 
 # --- CONFIGURAÇÕES DE TELA ---
-SCREEN_WIDTH = 800
-SCREEN_HEIGHT = 600
+SCREEN_WIDTH = 1080
+SCREEN_HEIGHT = 720
 SCREEN_SIZE = (SCREEN_WIDTH, SCREEN_HEIGHT)
 WHITE = (255, 255, 255)
 RED = (255, 0, 0)
@@ -47,9 +43,7 @@ laser_sound = None
 explosion_sound = None
 
 
-
 # --- Classes de Sprites (Omitidas para brevidade, mas devem estar aqui: Nave, Projetil, Inimigo, ProjetilInimigo) ---
-
 class Nave(pygame.sprite.Sprite):
     def __init__(self):
         super().__init__()
@@ -149,8 +143,6 @@ class Explosao(pygame.sprite.Sprite):
         if self.frame > self.max_frames:
             self.kill()
 
-
-
 # --- FUNÇÕES DE LÓGICA GERAL (Omitidas para brevidade, mas essenciais) ---
 def initialize_game():
     global player, all_sprites, bullets, enemies, enemy_bullets, SCORE, game_over
@@ -163,12 +155,10 @@ def initialize_game():
     player = Nave();
     all_sprites.add(player)
 
-
 def spawn_enemy():
     enemy = Inimigo();
     all_sprites.add(enemy);
     enemies.add(enemy)
-
 
 def shoot():
     global SCORE
@@ -182,15 +172,12 @@ def shoot():
         pygame.time.set_timer(pygame.USEREVENT, 150)
         #SCORE += 1
 
-
-
 def draw_text(screen, text, size, x, y, color=WHITE):
     font = pygame.font.Font(None, size);
     text_surface = font.render(text, True, color);
     text_rect = text_surface.get_rect()
     text_rect.midtop = (x, y);
     screen.blit(text_surface, text_rect)
-
 
 def show_game_over_screen(screen, clock, reader_thread, serial_active):
     global running, game_over, waiting_for_input
@@ -216,9 +203,6 @@ def show_game_over_screen(screen, clock, reader_thread, serial_active):
                 if state['BTN_SW']: waiting_for_input = False; running = False
         if serial_active: time.sleep(0.1)
 
-    # --- FUNÇÕES DE INPUT (para escopo global) ---
-
-
 # [As funções handle_input_arduino e handle_input_teclado estão definidas no final]
 def handle_input_arduino(reader_thread):
     global player
@@ -232,7 +216,6 @@ def handle_input_arduino(reader_thread):
     if state['BTN_A']: shoot()
     if not state['BTN_A']: player.can_shoot = True
 
-
 def handle_input_teclado():
     global player
     keys = pygame.key.get_pressed()
@@ -245,27 +228,10 @@ def handle_input_teclado():
     if keys[pygame.K_SPACE]: shoot()
     if not keys[pygame.K_SPACE]: player.can_shoot = True
 
-
 # --- LOOP PRINCIPAL DO JOGO ---
-
 def game_loop(arduino_reader=None):
     global LAST_ENEMY_SPAWN_TIME, running, game_over, SCORE
     global laser_sound, explosion_sound
-
-    ''''# 1. Tenta Inicializar o Leitor Serial no Thread (SEMPRE DENTRO DE UM TRY/EXCEPT)
-    arduino_reader = ArduinoSerialReader(SERIAL_PORT, BAUD_RATE)
-
-    try:
-        arduino_reader.start()
-        time.sleep(2)
-        serial_active = arduino_reader.ser is not None and arduino_reader.ser.is_open
-        print(f"Serial ativo? {serial_active}")
-
-    except Exception:
-        # Falha total na inicialização do thread/serial.
-        print("AVISO: Falha grave ao iniciar o Thread Serial. O controle Arduino está DESATIVADO.")
-        serial_active = False
-    '''
 
     serial_active = arduino_reader and arduino_reader.ser and arduino_reader.ser.is_open
 
@@ -297,7 +263,6 @@ def game_loop(arduino_reader=None):
     explosion_sound.set_volume(0.4)
 
     initialize_game()
-
     try:
         while running:
             # [O restante do loop de jogo permanece o mesmo...]
@@ -395,7 +360,6 @@ def game_loop(arduino_reader=None):
 
         # Não fecha o Pygame nem sai do programa
         return  # volta para o menu
-
 
 
 if __name__ == '__main__':

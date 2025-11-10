@@ -71,8 +71,6 @@ class Dino(pygame.sprite.Sprite):
         # mantém o rect no meio inferior
         self.rect = self.image.get_rect(midbottom=(self.rect.centerx, self.rect.bottom))
 
-
-
 class Obstacle(pygame.sprite.Sprite):
     # Tipos de obstáculos com tamanhos fixos
     OBSTACLES = {
@@ -101,7 +99,6 @@ class Obstacle(pygame.sprite.Sprite):
         self.rect.x -= self.speed
         if self.rect.right < 0:
             self.kill()
-
 
 # --- FUNÇÃO PRINCIPAL ---
 def game_loop(arduino_reader=None):
@@ -197,7 +194,6 @@ def game_loop(arduino_reader=None):
     all_sprites.empty()
     obstacles.empty()
     return
-
 
 if __name__ == "__main__":
     game_loop()
